@@ -1,0 +1,15 @@
+#!/bin/bash
+ip=$(timeout 3 curl -4 -s icanhazip.com)
+openssl genrsa -out secret.key 2048
+openssl req -key secret.key -new -out cert.csr -nodes \
+-subj "/C=AU/ST=StateName/L=CityName/O=CompanyName/OU=CompanySectionName/CN=$ip" \
+-addext "subjectAltName=DNS:$ip,DNS:*.$ip,IP:$ip"
+openssl x509 -signkey secret.key -in cert.csr -req -days 3650 -out cert.crt
+
+
+place=$(pwd)
+echo -e "\033[32mПуть к файлу публичного ключа сертификата панели:\033[32m"
+echo -e "\033[31m$place/cert.crt\033[31m"
+
+echo -e "\033[32mПуть к файлу приватного ключа сертификата панели:\033[32m"
+echo -e "\033[31m$place/secret.key\033[31m"
